@@ -1,0 +1,18 @@
+{
+  "name": "package-mover",
+  "version": "1.0.0",
+  "description": "",
+  "bin": {
+    "package-mover": "bin/index.js"
+  },  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node bin/index"
+  },
+  "keywords": [
+    "package_mover",
+    "package-mover",
+    "packages"
+  ],
+  "author": "IVainqueur",
+  "license": "MIT"
+}
