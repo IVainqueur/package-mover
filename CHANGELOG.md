@@ -18,3 +18,5 @@ Adding optionalDependencies as well
 Fixing bug about optional dependencies
 # v1.2.1
 Reducing the output
+# v1.2.2
+using `execSync`

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 const fs = require('fs')
-const { exec } = require('child_process')
+const { exec, execSync } = require('child_process')
 
 const { Params, PackageList, isWindows, redText, yellowText, greenText } = require('../utils')
 
@@ -142,7 +142,7 @@ async function updatePackageJson() {
 
     // Updating package-lock.json
     yellowText("Updating package-lock.json ...")
-    await exec(`cd ${params.destination} && npm prune`)
+    execSync(`cd ${params.destination} && npm prune`)
     greenText("package-lock.json updated!")
 
 }

@@ -32,3 +32,9 @@ Options:
   
   `-h, --help`                 Output usage information.
   
+
+# N.B.
+The package currently only works on `unix`-based systems, but the next release will be fully cross platform.
+
+# Contribution
+Feel free to fork the project and modify it to your liking.
