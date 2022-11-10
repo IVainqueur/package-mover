@@ -29,14 +29,16 @@ async function getDependencies(package) {
         let {
             dependencies,
             devDependencies,
-            peerDependencies
+            peerDependencies,
+            optionalDependencies
         } = JSON.parse(fs.readFileSync(`${params.source}/node_modules/${package}/package.json`));
 
         packages.add(
             [
                 ...((dependencies && Object.keys(dependencies).map(el => ({ name: el, category: "dependencies" }))) ?? []),
                 ...((devDependencies && Object.keys(devDependencies).map(el => ({ name: el, category: "devDependencies" }))) ?? []),
-                ...((peerDependencies && Object.keys(peerDependencies).map(el => ({ name: el, category: "peerDependencies" }))) ?? [])
+                ...((peerDependencies && Object.keys(peerDependencies).map(el => ({ name: el, category: "peerDependencies" }))) ?? []),
+                ...((optionalDependencies && Object.keys(optionalDependencies).map(el => ({ name: el, category: "optionalDependencies" }))) ?? [])
             ]
         )
 
@@ -116,6 +118,10 @@ async function updatePackageJson() {
             peerDependencies: {
                 ...(updatedDeps.peerDependencies ?? {}),
                 ...(!!peerDep && { [package]: peerDep })
+            },
+            optionalDependencies: {
+                ...(updatedDeps.optionalDependencies ?? {}),
+                ...(!!peerDep && { [package]: peerDep })
             }
         }
     }
@@ -131,6 +137,10 @@ async function updatePackageJson() {
     destination.peerDependencies = {
         ...destination?.peerDependencies,
         ...updatedDeps.peerDependencies
+    }
+    destination.optionalDependencies = {
+        ...destination?.optionalDependencies,
+        ...updatedDeps.optionalDependencies
     }
 
 
