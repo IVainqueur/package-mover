@@ -4,14 +4,19 @@ Got no internet but want to still import NPM packages in your project? No worrie
 # Installation
 To install the package you just run
 
-`npm install -g package-manager`
+```shell
+npm install -g package-mover
+```
 
 **Note**: Linux users might need to use `sudo`
 
 # Usage
 To use the package simple run the command:
 
-Usage: `package-mover [options]`
+Usage: 
+```shell
+package-mover [options]
+```
 
 Options:
 

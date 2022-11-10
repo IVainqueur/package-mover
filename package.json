@@ -1,6 +1,6 @@
 {
   "name": "package-mover",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "",
   "bin": {
     "package-mover": "bin/package-mover.js"

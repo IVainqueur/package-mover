@@ -10,3 +10,5 @@ Trying `<br>` tag
 trying `\`
 # v1.0.5
 The changes were actually applying but the CDN was not updating
+# v1.0.6
+README.md formatting
