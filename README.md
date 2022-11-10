@@ -15,8 +15,14 @@ Usage: `package-mover [options]`
 
 Options:
   `-v, --version`              Output the current version.
+  
   `-s, --source=<value>`       Source folder. Can be absolute or relative path
+  
   `-d, --destination=<value>`  Destination folder. Can be absolute or relative path
+  
   `-p, --packages=<value...>`  The package or packages that you want to transfer
+  
   `-l, --logErrors`            For logging errors. default `false`
+  
   `-h, --help`                 Output usage information.
+  
