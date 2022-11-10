@@ -4,3 +4,9 @@ Initial release
 Added `commander`
 # v1.0.2
 formatting the README.md
+# v1.0.3
+Trying `<br>` tag
+# v1.0.4
+trying `\`
+# v1.0.5
+The changes were actually applying but the CDN was not updating
