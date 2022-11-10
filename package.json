@@ -3,10 +3,11 @@
   "version": "1.0.0",
   "description": "",
   "bin": {
-    "package-mover": "bin/index.js"
-  },  "scripts": {
+    "package-mover": "bin/package-mover.js"
+  },
+  "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node bin/index"
+    "start": "node bin/package-mover"
   },
   "keywords": [
     "package_mover",
@@ -14,5 +15,8 @@
     "packages"
   ],
   "author": "IVainqueur",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^9.4.1"
+  }
 }

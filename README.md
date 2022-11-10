@@ -11,16 +11,12 @@ To install the package you just run
 # Usage
 To use the package simple run the command:
 
-```shell
-package-mover --source=<source_dir> --destination=<destination_dir> --packages=<needed_packages> --logErrors=<true|false>
-```
+Usage: `package-mover [options]`
 
-- `<source_dir>`: is the *relative* or *absolute* path to the project that you want to get the modules from.
-- `<desination_dir>`: is the target directory into which you want to move the packages.
-- `<needed_packages>`: is the **package** or **packages** that you want to move. If more than one, they are to be separated by comma. 
-    eg: <br>
-        ```shell
-        package-mover --source=./project1 --destination=./project2 --packages=express,cors
-        ```
-
-In the above example the packages `express` and `cors` are being imported from `project1` to `project2`
+Options:
+  `-v, --version`              Output the current version.
+  `-s, --source=<value>`       Source folder. Can be absolute or relative path
+  `-d, --destination=<value>`  Destination folder. Can be absolute or relative path
+  `-p, --packages=<value...>`  The package or packages that you want to transfer
+  `-l, --logErrors`            For logging errors. default `false`
+  `-h, --help`                 Output usage information.
