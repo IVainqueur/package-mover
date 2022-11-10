@@ -14,6 +14,7 @@ To use the package simple run the command:
 Usage: `package-mover [options]`
 
 Options:
+
   `-v, --version`              Output the current version.
   
   `-s, --source=<value>`       Source folder. Can be absolute or relative path
