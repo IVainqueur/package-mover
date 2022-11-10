@@ -14,3 +14,7 @@ The changes were actually applying but the CDN was not updating
 README.md formatting
 # v1.1.0
 Adding optionalDependencies as well
+# v1.2.0
+Fixing bug about optional dependencies
+# v1.2.1
+Reducing the output

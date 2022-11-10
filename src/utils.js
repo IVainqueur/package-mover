@@ -52,6 +52,21 @@ function isWindows () {
     return !!process.platform.match('win32')
 }
 
+function redText(...args){
+    console.log("\x1b[031m", ...args,"\x1b[0m");
+}
+
+function greenText(...args){
+    console.log("\x1b[032m", ...args,"\x1b[0m");
+}
+
+function yellowText(...args){
+    console.log("\x1b[033m", ...args,"\x1b[0m");
+}
+
 module.exports.Params = Params
 module.exports.PackageList = PackageList
 module.exports.isWindows = isWindows
+module.exports.redText = redText
+module.exports.greenText = greenText
+module.exports.yellowText = yellowText

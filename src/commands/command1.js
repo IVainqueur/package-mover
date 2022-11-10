@@ -2,7 +2,7 @@
 const fs = require('fs')
 const { exec } = require('child_process')
 
-const { Params, PackageList, isWindows } = require('../utils')
+const { Params, PackageList, isWindows, redText, yellowText, greenText } = require('../utils')
 
 let params;
 
@@ -15,7 +15,7 @@ function parseParams(args) {
     }
     for (const param of ["source", "destination", "packages"]) {
         if (!!p[param]) continue;
-        console.log(`[error] missing --${param} parameter`)
+        redText(`[error] missing --${param} parameter`) // Logging error
         process.exit(1);
     }
     // formatting
@@ -43,7 +43,7 @@ async function getDependencies(package) {
         )
 
     } catch (e) {
-        if (params.logErrors) console.log("[Error] Failed to resolve :", package);
+        if (params.logErrors) redText("[Error] Failed to resolve :", package);
     }
     return packages;
 }
@@ -63,7 +63,6 @@ async function getDependencies(package) {
 async function start(options) {
     
     params = parseParams(options ?? process.argv.slice(2));
-    console.log(params);
     const packages = new PackageList();
     for (const pkg of params.packages) {
         packages.add((await getDependencies(pkg)).values());
@@ -72,15 +71,10 @@ async function start(options) {
         await resolveSubDependencies(package_name, packages)
     }
 
-    //copy the found modules
-    copyFolders(packages.names())
-    // Update the destination package.json
-    updatePackageJson()
-    console.log(
-        // packages.names(),
-        packages.size()
-    );
+    console.log("Copying", packages.size(), "packages...")
 
+    copyFolders(packages.names())
+    updatePackageJson()
 }
 
 async function resolveSubDependencies(package, mainPackages) {
@@ -104,6 +98,7 @@ async function updatePackageJson() {
         const dep = source.dependencies?.[package]
         const devDep = source.devDependencies?.[package]
         const peerDep = source.devDependencies?.[package]
+        const optionalDep = source.devDependencies?.[package]
 
         updatedDeps = {
             ...updatedDeps,
@@ -121,7 +116,7 @@ async function updatePackageJson() {
             },
             optionalDependencies: {
                 ...(updatedDeps.optionalDependencies ?? {}),
-                ...(!!peerDep && { [package]: peerDep })
+                ...(!!optionalDep && { [package]: optionalDep })
             }
         }
     }
@@ -143,12 +138,14 @@ async function updatePackageJson() {
         ...updatedDeps.optionalDependencies
     }
 
-
-    // console.log(destination)
     fs.writeFileSync(`${params.destination}/package.json`, JSON.stringify(destination, null, 4))
 
-}
+    // Updating package-lock.json
+    yellowText("Updating package-lock.json ...")
+    await exec(`cd ${params.destination} && npm prune`)
+    greenText("package-lock.json updated!")
 
+}
 
 async function copyFolders(names) {
     // Make the main directories
@@ -160,6 +157,5 @@ async function copyFolders(names) {
     exec(`${cmd} && ${cmd2}`);
 
 }
-
 
 module.exports.start = start

@@ -16,7 +16,6 @@ const bootstrap = async () => {
 
     program.parse()
 
-    console.log(commander.program.opts())
     await start({
         ...commander.program.opts(),
         alreadyParsed: true
