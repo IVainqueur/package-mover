@@ -20,3 +20,5 @@ Fixing bug about optional dependencies
 Reducing the output
 # v1.2.2
 using `execSync`
+# v1.2.3
+Updating the README.md
