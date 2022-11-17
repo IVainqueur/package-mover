@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 const commander = require('commander')
-const { start } = require('../src/commands/command1')
+const { start } = require('../src/commands/mover')
 const bootstrap = async () => {
     const program = commander;
     program.version(`\x1b[1mv${require('../package.json').version}\x1b[0m`, '-v, --version', 'Output the current version.')

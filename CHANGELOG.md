@@ -22,3 +22,7 @@ Reducing the output
 using `execSync`
 # v1.2.3
 Updating the README.md
+# v1.3.0
+Making a `.bat` file for compatibility with windows
+# v1.3.1
+updating `command1.js` tp `mover.js`

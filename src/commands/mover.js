@@ -152,7 +152,12 @@ async function copyFolders(names) {
     let package_names = params.packages.map(el => `${params.source}/node_modules/${el}`).join(' ') + ' ' + names.map(el => `${params.source}/node_modules/${el}`).join(' ')
 
     const cmd = `mkdir -p ${params.destination}/node_modules`
-    const cmd2 = `${isWindows() ? 'copy /Y' : 'rsync --ignore-missing-args -r'}  ${package_names} ${params.destination}/node_modules`
+    let cmd2 = ``;
+    if(isWindows()) {
+        cmd2 = `pm-copy ${params.destination} ${package_names}`
+    }else{
+        cmd2 = `rsync --ignore-missing-args -r ${package_names} ${params.destination}/node_modules`
+    }
 
     exec(`${cmd} && ${cmd2}`);
 
