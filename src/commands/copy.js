@@ -1,16 +1,10 @@
 #!/usr/bin/env node
-/**
- * @typedef {Array} CopyParams
- * @property {String} destination The path to where the packages are going to be copied
- * @property {String[]} sources An array of paths to copy to the `destination`
- */
-
 const { exec } = require('child_process')
 const path = require('path')
 const { isWindows } = require('../utils')
 
 /**
- * @param {CopyParams} options
+ * @param {String[]} options
  */
 const start = (options) => {
     if(!isWindows()) process.exit(0);
