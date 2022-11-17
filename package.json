@@ -3,7 +3,8 @@
   "version": "1.2.3",
   "description": "",
   "bin": {
-    "package-mover": "bin/package-mover.js"
+    "package-mover": "bin/package-mover.js",
+    "pm-copy": "bin/pm-copy.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -12,7 +13,8 @@
   "keywords": [
     "package_mover",
     "package-mover",
-    "packages"
+    "packages",
+    "cross-platform"
   ],
   "author": "IVainqueur",
   "license": "MIT",

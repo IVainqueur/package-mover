@@ -49,7 +49,7 @@ async function getDependencies(package) {
 }
 
 /**
- * @typedef {Object} Params
+ * @typedef {Object} StartParams
  * @property {String} source
  * @property {String} destination
  * @property {String} packages
@@ -58,7 +58,7 @@ async function getDependencies(package) {
  */
 
 /**
- * @param {Params} options 
+ * @param {StartParams} options 
  */
 async function start(options) {
     
