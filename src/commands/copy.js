@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-const { exec } = require('child_process')
+const { exec, execSync } = require('child_process')
 const path = require('path')
 const { isWindows } = require('../utils')
 
@@ -13,7 +13,11 @@ const start = (options) => {
     const sources = options.slice(1);
 
     const cmd = `${path.join(__dirname, '../../pm-copy.bat')} ${sources.join(' ')} ${destination}`;
-    exec(cmd)
+    try{
+        execSync(cmd)
+    }catch(e){
+        
+    }
 }
 
 module.exports.start = start
