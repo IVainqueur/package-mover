@@ -1,10 +1,11 @@
 # Package-Mover
 
-Got no internet but want to still import NPM packages in your project? No worries. With Package-Mover you can import any package and all of its sub-dependecies from one project to any other in a matter of seconds without a shred of internet.
+Got no internet but want to still import NPM packages in your project? No worries. With Package-Mover you can copy any packages and all of their sub-dependecies from one npm project to any other in a matter of seconds without a shred of internet.
+Also, it works on any platform be it Windows or UNIX-based!
 
 # Installation
 
-To install the package you just run
+To install the package you just run 
 
 ```shell
 npm install -g package-mover
@@ -39,4 +40,12 @@ Options:
 
 # Contribution
 
-Feel free to fork the project and modify it to your liking.
+Feel free to fork the project on [github](https://github.com/IVainqueur/package-mover) and modify it to your liking.
+
+# Support
+
+I'd really appreciate it if you'd leave a star on the repo (https://github.com/IVainqueur/package-mover).
+
+You could also [buy me a coffee 😋](buymeacoffee.com/ivainqueur)
+<a href="https://www.buymeacoffee.com/ivainqueur" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>
+
