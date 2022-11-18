@@ -1,12 +1,11 @@
 #!/usr/bin/env node
-const { exec, execSync } = require('child_process')
 const path = require('path')
-const { isWindows } = require('../utils')
+const { isWindows, execProm } = require('../utils')
 
 /**
  * @param {String[]} options
  */
-const start = (options) => {
+const start = async (options) => {
     if(!isWindows()) process.exit(0);
     if(options.length < 2) process.exit(0);
     const destination = options[0];
@@ -14,10 +13,11 @@ const start = (options) => {
 
     const cmd = `${path.join(__dirname, '../../pm-copy.bat')} ${sources.join(' ')} ${destination}`;
     try{
-        execSync(cmd)
+        await execProm(cmd)
     }catch(e){
-        
+        console.log(e)
     }
 }
 
 module.exports.start = start
+module.exports.pmCopy = start

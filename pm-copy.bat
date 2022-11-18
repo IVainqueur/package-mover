@@ -17,7 +17,7 @@ goto :main
     set /a i=0
     set /a destindex = !len! + 1
     for %%x in (%arr%) do ( 
-        if !i! EQU !destindex! ( set destination=%%~fsx )
+        if !i! EQU !destindex! ( set destination=%%~fx )
         set /a i = !i! + 1
     )
 
@@ -28,8 +28,8 @@ goto :main
         if !i! GTR !len! ( goto :out )
         set /a i = !i! + 1
         :: MAKING THE DIRECTORY AND COPY THE CONTENT
-        mkdir %destination:~0,-1%node_modules\%%~nx >nul 2>&1
-        xcopy /E /C /Q /G /H /Y %%~fsx %destination:~0,-1%node_modules\%%~nx >nul 2>&1
+        mkdir %destination:~0,-1%\node_modules\%%~nx >nul 2>&1
+        xcopy /E /C /Q /G /H /Y %%~fx %destination:~0,-1%\node_modules\%%~nx >nul 2>&1
         
     )
     :out

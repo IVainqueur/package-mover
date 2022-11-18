@@ -31,3 +31,6 @@ Removing `npm prune`
 adding `pm-lockgen` command to generate generic lock files
 Now the package-lock is being updated manually 
 better windows and UNIX distinction
+
+# v1.4.1
+Testing on windows and fixing most issues

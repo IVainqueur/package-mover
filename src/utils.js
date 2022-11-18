@@ -98,7 +98,7 @@ async function getDependencies(package, params, packageLock, isPrimary) {
 
         let packageInfo = !!!packageLock
             ?
-            JSON.parse(fs.readFileSync(`${params.source}/node_modules/${package}/package.json`))
+            JSON.parse(fs.readFileSync(`${params.source}${isWindows() ? '\\' : '/'}node_modules/${package}/package.json`))
             :
             packageLock[params.legacy ? 'dependencies' : 'packages'][package_key] ?? {};
 

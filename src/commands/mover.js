@@ -13,6 +13,8 @@ const {
     execProm
 } = require('../utils');
 
+const { pmCopy } = require('./copy')
+
 let params;
 
 function parseParams(args) {
@@ -66,81 +68,23 @@ async function start(options) {
     console.timeEnd('duration:')
 }
 
-// async function updatePackageJson() {
-//     const source = JSON.parse(fs.readFileSync(`${params.source}/package.json`));
-//     const destination = JSON.parse(fs.readFileSync(`${params.destination}/package.json`));
-
-//     let updatedDeps = {};
-
-//     for (const package of params.packages) {
-//         const dep = source.dependencies?.[package]
-//         const devDep = source.devDependencies?.[package]
-//         const peerDep = source.devDependencies?.[package]
-//         const optionalDep = source.devDependencies?.[package]
-
-//         updatedDeps = {
-//             ...updatedDeps,
-//             dependencies: {
-//                 ...(updatedDeps.dependencies ?? {}),
-//                 ...(!!dep && { [package]: dep })
-//             },
-//             devDependencies: {
-//                 ...(updatedDeps.devDependencies ?? {}),
-//                 ...(!!devDep && { [package]: devDep })
-//             },
-//             peerDependencies: {
-//                 ...(updatedDeps.peerDependencies ?? {}),
-//                 ...(!!peerDep && { [package]: peerDep })
-//             },
-//             optionalDependencies: {
-//                 ...(updatedDeps.optionalDependencies ?? {}),
-//                 ...(!!optionalDep && { [package]: optionalDep })
-//             }
-//         }
-//     }
-
-//     destination.dependencies = {
-//         ...destination?.dependencies,
-//         ...updatedDeps.dependencies
-//     }
-//     destination.devDependencies = {
-//         ...destination?.devDependencies,
-//         ...updatedDeps.devDependencies
-//     }
-//     destination.peerDependencies = {
-//         ...destination?.peerDependencies,
-//         ...updatedDeps.peerDependencies
-//     }
-//     destination.optionalDependencies = {
-//         ...destination?.optionalDependencies,
-//         ...updatedDeps.optionalDependencies
-//     }
-
-//     fs.writeFileSync(`${params.destination}/package.json`, JSON.stringify(destination, null, 4))
-
-//     // Updating package-lock.json
-//     yellowText("Updating package-lock.json ...")
-//     await execProm(`cd ${params.destination} && npm prune`)
-//     greenText("package-lock.json updated!")
-
-// }
-
 async function copyFolders(names) {
     // Make the main directories
-    let package_names = params.packages.map(el => `${params.source}/node_modules/${el}`).join(' ') + ' ' + names.map(el => `${params.source}/node_modules/${el}`).join(' ')
+    let package_names = params.packages.map(el => `${params.source}${isWindows() ? '\\' : '/'}node_modules/${el}`).join(' ') + ' ' + names.map(el => `${params.source}${isWindows() ? '\\' : '/'}node_modules/${el}`).join(' ')
 
     let cmd = ``
     let cmd2 = ``;
     if (isWindows()) {
-        cmd = `if not exist "${path.resolve(params.destination)}/node_modules mkdir ${path.resolve(params.destination)}/node_modules`
-        cmd2 = `pm-copy ${params.destination} ${package_names}`
+        cmd = `if not exist "${path.resolve(params.destination)}${isWindows() ? '\\' : '/'}node_modules" mkdir ${path.resolve(params.destination)}${isWindows() ? '\\' : '/'}node_modules`
+        await pmCopy([params.destination, package_names])
     } else {
-        cmd = `mkdir -p ${params.destination}/node_modules`
-        cmd2 = `rsync --ignore-missing-args -r ${package_names} ${params.destination}/node_modules`
+        cmd = `mkdir -p ${params.destination}${isWindows() ? '\\' : '/'}node_modules`
+        cmd2 = `rsync --ignore-missing-args -r ${package_names} ${params.destination}${isWindows() ? '\\' : '/'}node_modules`
     }
 
     try {
-        await execProm(`${cmd} && ${cmd2}`);
+        await execProm(`${cmd}`);
+        if(!isWindows()) await execProm(`${cmd2}`);
     } catch (e) {
         redText(`[Error] Failed to copy the packages\nActual error: ${e.message}`)
         process.exit(1)
