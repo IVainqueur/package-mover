@@ -34,3 +34,5 @@ better windows and UNIX distinction
 
 # v1.4.1
 Testing on windows and fixing most issues
+# v1.4.2
+Updating README.md
