@@ -26,3 +26,8 @@ Updating the README.md
 Making a `.bat` file for compatibility with windows
 # v1.3.1
 updating `command1.js` tp `mover.js`
+# v1.4.0
+Removing `npm prune`
+adding `pm-lockgen` command to generate generic lock files
+Now the package-lock is being updated manually 
+better windows and UNIX distinction
