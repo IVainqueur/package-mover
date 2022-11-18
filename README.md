@@ -47,5 +47,6 @@ Feel free to fork the project on [github](https://github.com/IVainqueur/package-
 I'd really appreciate it if you'd leave a star on the repo (https://github.com/IVainqueur/package-mover).
 
 You could also [buy me a coffee 😋](buymeacoffee.com/ivainqueur)
+
 <a href="https://www.buymeacoffee.com/ivainqueur" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>
 
