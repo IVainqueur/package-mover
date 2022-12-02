@@ -78,7 +78,7 @@ async function copyFolders(names) {
 
         if (isWindows()) await pmCopy([params.destination, package_names]);
         else await execProm(`${copy_cmd}`);
-        
+
     } catch (e) {
         redText(`[Error] Failed to copy the packages\nActual error: ${e.message}`)
         process.exit(1)
