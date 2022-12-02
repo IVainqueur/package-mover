@@ -1,6 +1,6 @@
 {
   "name": "package-mover",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "description": "Got no internet but want to still import NPM packages in your project? No worries. With Package-Mover you can import any package and all of its sub-dependecies from one project to any other in a matter of seconds without a shred of internet.",
   "bin": {
     "package-mover": "bin/package-mover.js",

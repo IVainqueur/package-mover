@@ -36,3 +36,5 @@ better windows and UNIX distinction
 Testing on windows and fixing most issues
 # v1.4.2
 Updating README.md
+# v1.4.3
+Adding JsDoc and making the code easier to read
