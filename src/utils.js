@@ -73,6 +73,24 @@ class PackageList {
     }
 }
 
+function parseParams(args) {
+    if (args.alreadyParsed) return new Params(args.packages, args.source, args.destination, args.logErrors)
+    const p = new Params();
+    for (let arg of args) {
+        const [key, value] = arg.split("=");
+        if (Params.args.get(key)) p[Params.args.get(key)] = value;
+    }
+    for (const param of ["source", "destination", "packages"]) {
+        if (!!p[param]) continue;
+        redText(`[error] missing --${param} parameter`) // Logging error
+        process.exit(1);
+    }
+    // formatting
+    p.packages = p.packages.split(',')
+    return p;
+}
+
+
 function isWindows() {
     return !!process.platform.match('win32')
 }
@@ -102,7 +120,7 @@ async function getDependencies(package, params, packageLock, isPrimary) {
             :
             packageLock[params.legacy ? 'dependencies' : 'packages'][package_key] ?? {};
 
-        if(Object.keys(packageInfo).length == 0) return packages
+        if (Object.keys(packageInfo).length == 0) return packages
 
         //* Adding the current package first
         packages.add([
@@ -164,6 +182,12 @@ async function getPackageLock(src, params) {
     }
 }
 
+/**
+ * This function runs the child_process.exec command in a promise 
+ * this allows the use of `await` and .then blocks instead of having to use a callback function
+ * @param {String} command The command to run
+ * @returns 
+ */
 function execProm(command) {
     return new Promise((resolve, reject) => {
         exec(command, (err, stdout, stderr) => {
@@ -312,5 +336,7 @@ module.exports = {
     getPackageLock,
     execProm,
     generatelock,
-    updatePackageJson
+    updatePackageJson,
+    parseParams
+
 }

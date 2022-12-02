@@ -1,8 +1,6 @@
 #!/usr/bin/env node
-const fs = require('fs')
 const path = require('path');
 const {
-    Params,
     PackageList,
     isWindows,
     redText,
@@ -10,39 +8,23 @@ const {
     resolveSubDependencies,
     getPackageLock,
     updatePackageJson,
-    execProm
+    execProm,
+    parseParams
 } = require('../utils');
 
 const { pmCopy } = require('./copy')
 
 let params;
 
-function parseParams(args) {
-    if (args.alreadyParsed) return new Params(args.packages, args.source, args.destination, args.logErrors)
-    const p = new Params();
-    for (let arg of args) {
-        const [key, value] = arg.split("=");
-        if (Params.args.get(key)) p[Params.args.get(key)] = value;
-    }
-    for (const param of ["source", "destination", "packages"]) {
-        if (!!p[param]) continue;
-        redText(`[error] missing --${param} parameter`) // Logging error
-        process.exit(1);
-    }
-    // formatting
-    p.packages = p.packages.split(',')
-    return p;
-}
-
-
 /**
  * @typedef {Object} StartParams
- * @property {String} source
- * @property {String} destination
- * @property {String} packages
- * @property {boolean} logErrors
- * @property {boolean} alreadyParsed
+ * @property {String} source The relative or absolute path to the source directory
+ * @property {String} destination The relative or absolute path to the destination directory
+ * @property {String | String[]} packages An array of all the packages to transfer or string of space separated package names to be parsed into an array
+ * @property {boolean} logErrors Whether or not to log verbose output
+ * @property {boolean} alreadyParsed Whether or not the packages parameter has already been parsed
  */
+
 
 /**
  * @param {StartParams} options 
@@ -68,23 +50,35 @@ async function start(options) {
     console.timeEnd('duration:')
 }
 
+/**
+ * 
+ * @param {String[]} names an array of all package names to copy
+ */
 async function copyFolders(names) {
-    // Make the main directories
+    /* 
+    * Making an array of all packages found from the lock file plus the base packages specified at the start of the program
+    * Then appending /node_modules or \node_modules for UNIX or Windows respectively
+    * Then joining the array into on string to be used as part of the "copy_cmd" command
+    */
     let package_names = params.packages.map(el => `${params.source}${isWindows() ? '\\' : '/'}node_modules/${el}`).join(' ') + ' ' + names.map(el => `${params.source}${isWindows() ? '\\' : '/'}node_modules/${el}`).join(' ')
 
-    let cmd = ``
-    let cmd2 = ``;
+    let foldercheck_cmd = ``
+    let copy_cmd = ``;
+
     if (isWindows()) {
-        cmd = `if not exist "${path.resolve(params.destination)}${isWindows() ? '\\' : '/'}node_modules" mkdir ${path.resolve(params.destination)}${isWindows() ? '\\' : '/'}node_modules`
-        await pmCopy([params.destination, package_names])
+        foldercheck_cmd = `if not exist "${path.resolve(params.destination)}${isWindows() ? '\\' : '/'}node_modules" mkdir ${path.resolve(params.destination)}${isWindows() ? '\\' : '/'}node_modules`
+
     } else {
-        cmd = `mkdir -p ${params.destination}${isWindows() ? '\\' : '/'}node_modules`
-        cmd2 = `rsync --ignore-missing-args -r ${package_names} ${params.destination}${isWindows() ? '\\' : '/'}node_modules`
+        foldercheck_cmd = `mkdir -p ${params.destination}${isWindows() ? '\\' : '/'}node_modules`
+        copy_cmd = `rsync --ignore-missing-args -r ${package_names} ${params.destination}${isWindows() ? '\\' : '/'}node_modules`
     }
 
     try {
-        await execProm(`${cmd}`);
-        if(!isWindows()) await execProm(`${cmd2}`);
+        await execProm(`${foldercheck_cmd}`);
+
+        if (isWindows()) await pmCopy([params.destination, package_names]);
+        else await execProm(`${copy_cmd}`);
+        
     } catch (e) {
         redText(`[Error] Failed to copy the packages\nActual error: ${e.message}`)
         process.exit(1)

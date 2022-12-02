@@ -22,9 +22,11 @@
   "dependencies": {
     "commander": "^9.4.1"
   },
-  "main": "test.js",
+  "main": "bin/package-mover.js",
   "directories": {
-    "test": "test"
+    "bin": "bin",
+    "src": "src",
+    "commands": "src/commands"
   },
   "devDependencies": {},
   "repository": {
