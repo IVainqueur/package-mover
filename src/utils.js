@@ -36,24 +36,54 @@ class PackageList {
         if (!Array.isArray(init)) throw new Error("PackageList constructor receives array of initial values")
         init.map(el => this.add(el));
     }
+    /**
+     * 
+     * @returns {String[]} an array of all the packages' names
+     */
     names() {
         return this.list.map(el => el.name);
     }
+    /**
+     * 
+     * @returns {object[]} an array of all package objects stored
+     */
     values() {
         return this.list;
     }
+    /**
+     * 
+     * @param {String} prefix 
+     * @returns {object} an object of all packages with the names concatenated with the prefix in the format that they appear in the lock file
+     */
     content(prefix = '') {
         return this.list.map(el => ({ [prefix + el.name]: (el.content ?? {}) }))
     }
+    /**
+     * 
+     * @returns {object} an object of all package names as keys and their versions as values
+     */
     versions() {
         return this.list.map(el => ({ [el.name]: el.content?.version ?? "1.0.0" }))
     }
+    /**
+     * `primary packages` are the main packages that are specified once the program is run
+     * @returns {object[]} an array of the primary packages
+     */
     primary() {
         return this.list.filter(({ isPrimary }) => isPrimary)
     }
+    /**
+     * Works like .version() but only the versions of the `primary packages`
+     * @returns {object[]} an array of primary packages' names as values and their versions as values
+     */
     primary_versions() {
         return this.list.filter(({ isPrimary }) => isPrimary).map(el => ({ [el.name]: '^' + el.content?.version ?? "1.0.0" }))
     }
+    /**
+     * 
+     * @param {object | object[]} val an object or array of objects to add to the list
+     * @returns {object[]} the updated value of the list with the new package(s) added
+     */
     add(val) {
         if (!Array.isArray(val)) val = [val]
         const names = this.names();
@@ -64,15 +94,28 @@ class PackageList {
 
         return this.list
     }
-
+    /**
+     * 
+     * @param {String} val Name of a package that might be in the list
+     * @returns {boolean} `true` is the specified package is already in the list, `false` otherwise.
+     */
     contains(val) {
         return this.list.map(el => el.name).includes(val);
     }
+    /**
+     * 
+     * @returns {number} the current length of the list
+     */
     size() {
         return this.list.length;
     }
 }
 
+/**
+ * Parses the parameters if they're not already parsed and returns a `Params` object of the parsed parameters
+ * @param {object} args arguments provided running the program ( from `process` )
+ * @returns {Params} parsed object of parameterss
+ */
 function parseParams(args) {
     if (args.alreadyParsed) return new Params(args.packages, args.source, args.destination, args.logErrors)
     const p = new Params();
@@ -90,23 +133,44 @@ function parseParams(args) {
     return p;
 }
 
-
+/**
+ * Checks if the Operating System is Windows
+ * @returns {boolean} `true` if the OS is Windows, `false` otherwise.
+ */
 function isWindows() {
     return !!process.platform.match('win32')
 }
-
+/**
+ * Logs `red` output
+ * @param  {...any} args any number of parameters to log in `red`
+ */
 function redText(...args) {
     console.log("\x1b[031m", ...args, "\x1b[0m");
 }
-
+/**
+ * Logs `green` output
+ * @param  {...any} args any number of parameters to log in `green`
+ */
 function greenText(...args) {
     console.log("\x1b[032m", ...args, "\x1b[0m");
 }
-
+/**
+ * Logs `yellow` output
+ * @param  {...any} args any number of parameters to log in `yellow`
+ */
 function yellowText(...args) {
     console.log("\x1b[033m", ...args, "\x1b[0m");
 }
 
+/**
+ * Finds the direct sub-dependencies of `package` from `packageLock` if it is specified. 
+ * If it is not, the function tries to read the package.json of `package`
+ * @param {String} package The package for which to resolve dependencies
+ * @param {Object} params The parameters provided at the beginning of the program
+ * @param {Object} package_lock the lock file of the source directory
+ * @param {boolean} isPrimary is `package` a primary package?
+ * @returns {PackageList} a PackageList of the dependencies of `package`
+ */
 async function getDependencies(package, params, packageLock, isPrimary) {
     let packages = new PackageList();
     const package_key = params.legacy ? package : `node_modules/${package}`
@@ -161,7 +225,14 @@ async function getDependencies(package, params, packageLock, isPrimary) {
     return packages;
 }
 
-
+/**
+ * Analyses the dependency tree of `package` and adds all the missing packages to `mainPackages`
+ * 
+ * @param {String} package The package for which to resolve dependencies
+ * @param {PackageList} mainPackages The PackageList containing all the packages so far
+ * @param {Object} params The parameters provided at the beginning of the program
+ * @param {Object} package_lock the lock file of the source directory
+ */
 async function resolveSubDependencies(package, mainPackages, params, package_lock) {
     const subpackages = await getDependencies(package, params, package_lock);
     for (const subpackage of subpackages.values()) {
@@ -172,6 +243,12 @@ async function resolveSubDependencies(package, mainPackages, params, package_loc
     }
 }
 
+/**
+ * 
+ * @param {String} src relative or absolute path to the source destination
+ * @param {Params} params program parameters
+ * @returns {object} object containing the lock file in `src`
+ */
 async function getPackageLock(src, params) {
     const src_packagelock_fullpath = joinPath(resolvePath(src), './package-lock.json');
     try {
@@ -198,6 +275,11 @@ function execProm(command) {
     })
 }
 
+/**
+ * Updates the `params.destination`'s package.json and lock file
+ * @param {Params} params the program parameters
+ * @param {PackageList} packages PackageList of all the packages to add to the destination project
+ */
 async function updatePackageJson(params, packages) {
     const source = JSON.parse(fs.readFileSync(`${params.source}/package.json`));
     const destination = JSON.parse(fs.readFileSync(`${params.destination}/package.json`));
@@ -235,6 +317,13 @@ async function updatePackageJson(params, packages) {
 
 }
 
+/**
+ * Updates the `params.destination` lock file. 
+ * If the destination doesn't already have a lock file, it is automatically generated.
+ * @param {Params} params the program parameters
+ * @param {PackageList} packages PackageList of all the packages to transfer to the destination project
+ * @param {String} lockpath relative or absolute path to the destination lock file
+ */
 async function updateLock(params, packages, lockpath) {
     if (!fs.existsSync(lockpath) || params.forceLock) await generatelock(params.destination, {})
     let destinationPackageLock = await getPackageLock(params.destination);

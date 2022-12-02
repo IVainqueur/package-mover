@@ -11,7 +11,7 @@ const start = async (options) => {
     const destination = options[0];
     const sources = options.slice(1);
 
-    const cmd = `${path.join(__dirname, '../../pm-copy.bat')} ${sources.join(' ')} ${destination}`;
+    const cmd = `${path.join(__dirname, './pm-copy.bat')} ${sources.join(' ')} ${destination}`;
     try{
         await execProm(cmd)
     }catch(e){
