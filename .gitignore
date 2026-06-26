@@ -2,3 +2,6 @@ test*
 package-lock.json
 xcopy.exe
 node_modules
+# Benchmark fixtures & results
+benchmarks/.fixture/
+benchmarks/last-results.json

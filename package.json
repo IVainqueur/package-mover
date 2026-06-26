@@ -8,8 +8,11 @@
     "pm-lockgen": "bin/pm-lockgen.js"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node bin/package-mover"
+    "test": "node benchmarks/run.js --quick",
+    "start": "node bin/package-mover",
+    "bench": "node benchmarks/run.js",
+    "bench:quick": "node benchmarks/run.js --quick",
+    "bench:json": "node benchmarks/run.js --json"
   },
   "keywords": [
     "package_mover",
@@ -36,5 +39,8 @@
   "bugs": {
     "url": "https://github.com/IVainqueur/package-mover/issues"
   },
-  "homepage": "https://github.com/IVainqueur/package-mover#readme"
+  "homepage": "https://github.com/IVainqueur/package-mover#readme",
+  "engines": {
+    "node": ">=16.7.0"
+  }
 }
