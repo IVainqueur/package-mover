@@ -4,12 +4,12 @@ const {
     PackageList,
     isWindows,
     redText,
-    getDependencies,
-    resolveSubDependencies,
     getPackageLock,
     updatePackageJson,
-    execProm,
-    parseParams
+    parseParams,
+    resolveAllDependencies,
+    copyPackagesParallel,
+    DEFAULT_CONCURRENCY,
 } = require('../utils');
 
 const { pmCopy } = require('./copy')
@@ -35,13 +35,8 @@ async function start(options) {
     const packageLock = await getPackageLock(params.source, params)
     const packages = new PackageList();
 
-    for (const pkg of params.packages) {
-        packages.add((await getDependencies(pkg, params, packageLock, true)).values());
-    }
-
-    for (const package_name of packages.names()) {
-        await resolveSubDependencies(package_name, packages, params, packageLock)
-    }
+    // Parallel primary + iterative BFS transitive resolution (replaces sequential for-loops)
+    await resolveAllDependencies(params.packages, packages, params, packageLock, DEFAULT_CONCURRENCY);
 
     console.log("Copying", packages.size(), "packages...")
 
@@ -55,35 +50,27 @@ async function start(options) {
  * @param {String[]} names an array of all package names to copy
  */
 async function copyFolders(names) {
-    /* 
-    * Making an array of all packages found from the lock file plus the base packages specified at the start of the program
-    * Then appending /node_modules or \node_modules for UNIX or Windows respectively
-    * Then joining the array into on string to be used as part of the "copy_cmd" command
-    */
-    let package_names = params.packages.map(el => `${params.source}${isWindows() ? '\\' : '/'}node_modules/${el}`).join(' ') + ' ' + names.map(el => `${params.source}${isWindows() ? '\\' : '/'}node_modules/${el}`).join(' ')
-
-    let foldercheck_cmd = ``
-    let copy_cmd = ``;
-
-    if (isWindows()) {
-        foldercheck_cmd = `if not exist "${path.resolve(params.destination)}${isWindows() ? '\\' : '/'}node_modules" mkdir ${path.resolve(params.destination)}${isWindows() ? '\\' : '/'}node_modules`
-
-    } else {
-        foldercheck_cmd = `mkdir -p ${params.destination}${isWindows() ? '\\' : '/'}node_modules`
-        copy_cmd = `rsync --ignore-missing-args -r ${package_names} ${params.destination}${isWindows() ? '\\' : '/'}node_modules`
-    }
+    // Deduplicate primary + resolved names once
+    const allNames = [...new Set([...params.packages, ...names])];
 
     try {
-        await execProm(`${foldercheck_cmd}`);
-
-        if (isWindows()) await pmCopy([params.destination, package_names]);
-        else await execProm(`${copy_cmd}`);
-
+        if (isWindows()) {
+            // Windows: keep bat path for compatibility, but feed unique paths only
+            const package_names = allNames
+                .map(el => `${params.source}\\node_modules\\${el}`)
+                .join(' ');
+            const foldercheck_cmd = `if not exist "${path.resolve(params.destination)}\\node_modules" mkdir ${path.resolve(params.destination)}\\node_modules`;
+            const { execProm } = require('../utils');
+            await execProm(`${foldercheck_cmd}`);
+            await pmCopy([params.destination, package_names]);
+        } else {
+            // Unix: Node-native parallel copy — avoids rsync overhead on many small files
+            await copyPackagesParallel(params.source, params.destination, allNames, DEFAULT_CONCURRENCY);
+        }
     } catch (e) {
         redText(`[Error] Failed to copy the packages\nActual error: ${e.message}`)
         process.exit(1)
     }
-
 }
 
 module.exports.start = start
